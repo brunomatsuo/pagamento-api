@@ -35,7 +35,7 @@ public class PagamentoServiceImpl implements PagamentoService {
 
         try {
             pagamento = pagamentoRepository.save(pagamento);
-            Boolean pedidoAtualizado = atualizarPedido(pagamento);
+            atualizarPedido(pagamento);
 
             return pagamento;
         } catch (Exception ex) {
@@ -63,7 +63,7 @@ public class PagamentoServiceImpl implements PagamentoService {
             }
             try {
                 pagamentoRepository.save(pagamento);
-                Boolean pedidoAtualizado = atualizarPedido(pagamento);
+                atualizarPedido(pagamento);
 
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
@@ -71,7 +71,7 @@ public class PagamentoServiceImpl implements PagamentoService {
         }
     }
 
-    public Boolean atualizarPedido(Pagamento pagamento) {
+    public void atualizarPedido(Pagamento pagamento) {
         JSONObject json = new JSONObject();
         json.put("pedidoId", pagamento.getPedidoId());
         json.put("novoStatus", pagamento.getStatusPagamento());
@@ -82,11 +82,6 @@ public class PagamentoServiceImpl implements PagamentoService {
 
         ResponseEntity<String> response = restTemplate
                 .exchange(urlPedido, HttpMethod.PUT, entity, String.class);
-
-        if(response.getStatusCode() != HttpStatus.OK) {
-            return null;
-        }
-        return true;
     }
 
     private int generateRandomNumber() {
