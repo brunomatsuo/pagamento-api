@@ -6,6 +6,7 @@ import br.com.pagamentoapi.model.Pagamento;
 import br.com.pagamentoapi.repository.PagamentoRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -21,6 +22,9 @@ public class PagamentoServiceImpl implements PagamentoService {
 
     @Autowired
     RestTemplate restTemplate;
+
+    @Value("${url.pedido}")
+    private String urlPedido;
 
     @Override
     public Pagamento efetuarPagamento(Integer pedidoId, FormaPagamento formaPagamento) {
@@ -52,7 +56,7 @@ public class PagamentoServiceImpl implements PagamentoService {
             } else {
                 Thread.sleep(6000);
             }
-            if (generateRandomNumber() > 40) {
+            if (generateRandomNumber() > 30) {
                 pagamento.setStatusPagamento(StatusPagamento.PAGAMENTO_EFETUADO);
             } else {
                 pagamento.setStatusPagamento(StatusPagamento.FALHA_PAGAMENTO);
@@ -77,7 +81,7 @@ public class PagamentoServiceImpl implements PagamentoService {
         HttpEntity<String> entity = new HttpEntity<>(json.toString(), headers);
 
         ResponseEntity<String> response = restTemplate
-                .exchange("http://localhost:8084/pedido", HttpMethod.PUT, entity, String.class);
+                .exchange(urlPedido, HttpMethod.PUT, entity, String.class);
 
         if(response.getStatusCode() != HttpStatus.OK) {
             return null;
